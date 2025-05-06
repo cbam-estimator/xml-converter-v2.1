@@ -1,0 +1,72 @@
+
+app_info:
+  version: 0.0
+  name: "CE XML Converter 2.1"
+
+# workflow
+
+move_customer_file: False
+
+input_directory: '/Users/andreas/home/2 - cbam-estimator/3 - workspaces/report-creation/report-creation-workflow/1 - input'
+output_directory: '/Users/andreas/home/2 - cbam-estimator/3 - workspaces/report-creation/report-creation-workflow/2 - output'
+default_data_file: '/Users/andreas/home/2 - cbam-estimator/3 - workspaces/report-creation/report-creation-workflow/3 - resources/default_data.xlsx'
+
+log_file: "/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/Completed Reports/log/report_creation_log.csv"
+customer_reports_overview_filepath: '/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/Report Creation - General/Kundenberichte.xlsx'
+finished_reports_file_path: '/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/Completed Reports'
+all_customers_googledrive_filepath: '/Users/andreas/Library/CloudStorage/GoogleDrive-googledrive@cbam-estimator.com/Meine Ablage/Kundenberichte/Alle Kunden'
+
+#intern paths
+version_layouts_file: "resources/version_layouts.yml"
+
+
+
+options:
+  # Format: "2021-01-01T00:00:00Z"; Default: Current time
+  report_creation_time: "default"
+  set_customer_eori_as_importer_eori: False # if false uses our eori
+
+### SUPPLIER WORKFLOW SETTINGS
+
+determination_approach:
+  "Q4-2023": "default_values"
+  "Q1-2024": "default_values"
+  "Q2-2024": "default_values"
+  "Q3-2024": "real_data_determination"
+  "Q4-2024": "real_data_determination"
+  "Q1-2025": "real_data_determination"
+  "Q2-2025": "real_data_determination"
+  "Q3-2025": "real_data_determination"
+  "Q4-2025": "real_data_determination"
+
+
+supplier_workflow:
+  #supplier_data_dir: "/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/TestFolder/Supplier Data"
+  #consultation_overview_file: "/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/TestFolder/consultation_overview_ZR.xlsm"
+  supplier_data_dir: "/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/supplier_communication/Supplier Data"
+  consultation_overview_file: "/Users/andreas/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow/supplier_communication/consultation_overview_RH_ohne_makros.xlsm"
+  supplier_tool_pattern: "Supplier_*.xlsx"
+  doc_template_file: '/Users/andreas/home/2 - cbam-estimator/3 - workspaces/report-creation/report-creation-workflow/3 - resources/supporting_document_templates/cbam_estimator_supporting_doc.pdf'
+  doc_signature_name: "Roman Haak"
+  status:
+    "1 - Manufacturer not yet contacted": "abort" # -> abort when in progress
+    "2 - Manufacturer contacted": "abort"
+    "2.0 - Manufacturer replied, no consultation so far": "abort"
+    "2.1 - No response - Contacted again (1)": "abort"
+    "2.2 - No response - Contacted again (2)": "abort"
+    "3 - Under consultation": "abort"
+    "3.0 - Under consultation, ready for zero report" : "zero_report"
+    "3.1 - No response after Questions - Contact again": "abort"
+    "3.2 - Work in Progress (long ago) - Contact again": "abort"
+    "3.3 - No Calculation in time" : "zero_report"
+    "4A - Emission data not determined - final": "zero_report" # 03 # creating docs
+    "4B - Emission data determined": "abort" # reporting data still missing
+    "4C - Emission data and reporting data determined": "use_supplier_tool_data" # 01
+    "5 - Tool explained - final": "use_supplier_tool_data"
+    "CD1 - Emission Data from Customer" : "use_supplier_tool_data"
+    "CD2 - Failed Communication Docu from Customer" : "zero_report_sup_docs"
+    "X1 - Zero Report without Documentation" : "zero_report_without_docs"
+
+
+
+

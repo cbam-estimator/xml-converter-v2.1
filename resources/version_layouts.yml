@@ -1,0 +1,284 @@
+
+# TODO : check all formats in sdtypes excel
+# TODO : add all sheets and versions
+# TODO : legacy mechanism for fields (columns)
+# TODO : work out the conditional statements
+# versions
+base:
+  sheets:
+    - code_sheet_name: "Allgemeine_Informationen"
+      alias_sheet_name: ["Allgemeine_Informationen", "Allgemeine Informationen"]
+      tables:
+        - table_name: "General_Information"
+          num_entries: "1"
+          orientation: "horizontal"
+          upper_left: "auto:Unternehmen"
+          fields:
+            - alias_field_name: "Unternehmen"
+              code_field_name: "importer_name"
+              type: "string_m"
+            - alias_field_name: "Straße"
+              code_field_name: "importer_street"
+              type: "string_m"
+            - alias_field_name: "Hausnummer"
+              code_field_name: "importer_street_number"
+              type: "string_m"
+            - alias_field_name: "Adresszusatz"
+              code_field_name: "importer_address_addition"
+              type: "string_o"
+            - alias_field_name: "Postleitzahl"
+              code_field_name: "importer_postcode"
+              type: "string_m"
+            - alias_field_name: "Stadt"
+              code_field_name: "importer_city"
+              type: "string_m"
+            - alias_field_name: "Land"
+              code_field_name: "importer_country"
+              type: "country_m"
+            - alias_field_name: "EORI-Nummer"
+              code_field_name: "importer_eori"
+              type: "eori_m"
+            - alias_field_name: "Ansprechpartner"
+              code_field_name: "importer_contact_person"
+              type: "string_m"
+            - alias_field_name: "Ansprechpartner - Position"
+              code_field_name: "importer_contact_person_position"
+              type: "string_m"
+        - table_name: "Quarter"
+          num_entries: "1"
+          orientation: "horizontal"
+          upper_left: "auto:JAHR"
+          fields:
+            - alias_field_name: "JAHR"
+              code_field_name: "year"
+              type: "year_m"
+            - alias_field_name: "QUARTAL"
+              code_field_name: "quarter"
+              type: "quarter_m"
+    - code_sheet_name: "Ihre_CN_Code_Liste"
+      alias_sheet_name: ["Ihre_CN_Code_Liste", "CN Codes"]
+      tables:
+        - table_name: "CN_Codes"
+          num_entries: "..500"
+          orientation: "vertical"
+          upper_left: ["auto:Nr.", "auto:Nummerierung"]
+          num_examples: 2
+          fields:
+            - alias_field_name: "CN-Code (8-stellig)"
+              code_field_name: "cn_code"
+              type: "cn_code_m"
+    - code_sheet_name: "Ihre_Hersteller_Liste"
+      alias_sheet_name: ["Ihre_Hersteller_Liste", "Hersteller"]
+      tables:
+        - table_name: "Operator_List"
+          num_entries: "..250"
+          orientation: "vertical"
+          upper_left: ["auto:Nr.", "auto:Nummerierung"]
+          fields:
+            - alias_field_name: ["Name", "Name des Herstellers"]
+              code_field_name: "operator_name"
+              type: "string_m"
+            - alias_field_name: "Straße"
+              code_field_name: "operator_street"
+              type: "string_o"
+            - alias_field_name: ["Hausnummer", "HausNr."]
+              code_field_name: "operator_street_number"
+              type: "string_o"
+            - alias_field_name: "Adresszusatz"
+              code_field_name: "operator_street_additional_line"
+              type: "string_o"
+            - alias_field_name: "Postleitzahl"
+              code_field_name: "operator_postcode"
+              type: "string_o"
+            - alias_field_name: "Stadt"
+              code_field_name: "operator_city"
+              type: "string_m"
+            - alias_field_name: "Land"
+              code_field_name: "operator_country"
+              type: "country_m"
+            - alias_field_name: "Ansprechpartner"
+              code_field_name: "operator_contact_person"
+              type: "string_m"
+            - alias_field_name: "Email-Adresse"
+              code_field_name: "operator_email"
+              type: "mail_adress_m"
+            - alias_field_name: "Telefonnummer"
+              code_field_name: "operator_phone"
+              type: "string_m"
+            - alias_field_name: "Anmerkungen"
+              required: False
+              code_field_name: "operator_remarks"
+              type: "string_o"
+    - code_sheet_name: "Produktions_Standorte_Liste"
+      alias_sheet_name: ["Produktions_Standorte_Liste", "Produktionsstandorte"]
+      tables:
+        - table_name: "installations"
+          num_entries: "..250"
+          orientation: "vertical"
+          upper_left: ["auto:Nr.", "auto:Nummerierung"]
+          num_examples: 2
+          fields:
+            - alias_field_name: "Hersteller"
+              code_field_name: "installation_operator_name"
+              type: "string_m"
+              primary_key: True
+            - alias_field_name: "Name des Standorts"
+              code_field_name: "installation_name"
+              type: "string_m"
+            - alias_field_name: "Straße"
+              code_field_name: "installation_street"
+              type: "string_o"
+            - alias_field_name: "Hausnummer"
+              code_field_name: "installation_street_number"
+              type: "string_o"
+            - alias_field_name: "Adresszusatz"
+              code_field_name: "installation_street_additional_line"
+              type: "string_o"
+            - alias_field_name: "Postleitzahl"
+              code_field_name: "installation_postcode"
+              type: "string_o"
+            - alias_field_name: "Stadt"
+              code_field_name: "installation_city"
+              type: "string_o" 
+            - alias_field_name: "Land"
+              code_field_name: "installation_country"
+              type: "country_m"
+            - alias_field_name: "Anmerkungen"
+              required: False
+              code_field_name: "installation_remarks"
+              type: "string_o"
+    - code_sheet_name: "Angaben_zu_Warenmengen"
+      alias_sheet_name: ["Angaben_zu_Warenmengen", "Warenimporte"]
+      tables:
+        - table_name: "table_imported_goods"
+          num_entries: "..500"
+          orientation: "vertical"
+          upper_left: ["auto:Nr.", "auto:Nummerierung"]
+          num_examples: 3
+          fields:
+            - alias_field_name: "Ihre Anmerkungen"
+              required: False # default/ not added is True → absence of this will not cause an error
+              code_field_name: "remarks"
+              type: "string_o"
+            - alias_field_name: "CN-Code"
+              code_field_name: "cn_code"
+              type: "cn_code_m"
+              primary_key: True
+            - alias_field_name: ["Produktionsstandort / Hersteller", "Hersteller", "Hersteller / Händler / Installation"]
+              code_field_name: "operator_or_installation"
+              type: "string_m"
+            - alias_field_name: "Einheit"
+              code_field_name: "net_mass_unit"
+              type: "good_quantity_unit_m"
+            - alias_field_name: "Warenmenge"
+              code_field_name: "net_mass"
+              type: "net_mass_m"
+            - alias_field_name: "Produktionsmethode"
+              code_field_name: "production_method"
+              type: "production_method_o"
+            - alias_field_name: ["Ursprünglich zur Veredelung importiert", "Veredelung"]
+              code_field_name: "inward_processing"
+              type: "inward_processing_o"
+            - alias_field_name: "Zollverfahren"
+              code_field_name: "requested_procedure"
+              type: "customs_procedure_desc_m"
+            - alias_field_name: "Vorheriges Zollverfahren"
+              code_field_name: "previous_procedure"
+              required: False
+              type: "customs_procedure_desc_o"
+            - alias_field_name: "Ursprungsland"
+              required: False
+              code_field_name: "country_of_origin"
+              type: "country_o"
+            - alias_field_name: "Produktionsland"
+              required: False
+              code_field_name: "country_of_production"
+              type: "country_o"
+            - alias_field_name: "Menge bereits veredelter Ware..."
+              required: False
+              code_field_name: "already_processed"
+              type: "net_mass_o"
+            - alias_field_name: "Menge noch nicht veredelter Ware..."
+              required: False
+              code_field_name: "not_processed"
+              type: "net_mass_o"
+            - alias_field_name: "Zulassungsstaat"
+              required: False
+              code_field_name: "member_state_of_authorization"
+              type: "country_o"
+            - alias_field_name: ["Vorlageverpflichtung", "Keine Vorlageverpflichtung"]
+              required: False
+              code_field_name: "bill_of_discharge_waiver"
+              type: "boolean_o"
+            - alias_field_name: "Bewilligung"
+              required: False
+              code_field_name: "authorization"
+              type: "string_o"
+            - alias_field_name: "Anfang"
+              required: False
+              code_field_name: "start_date"
+              type: "date_str8_o"
+            - alias_field_name: "Ende"
+              required: False
+              code_field_name: "end_date"
+              type: "date_str8_o"
+            - alias_field_name: "Frist"
+              required: False
+              code_field_name: "deadline"
+              type: "date_str8_c"
+              condition:
+                con_type: "OR"
+                ls:
+                - field: "previous_procedure"
+                  operator: "=="
+                  value: "51"
+                - field: "previous_procedure"
+                  operator: "=="
+                  value: "54"
+
+# version without inward processing informations
+version_1_7:
+  description: >
+    version WITHOUT inward processing informations but WITH installations
+  sheets:
+    - code_sheet_name: "Angaben_zu_Warenmengen"
+      alias_sheet_name: "Angaben_zu_Warenmengen"
+      tables:
+        - table_name: "table_imported_goods"
+          num_entries: "..224"
+          orientation: "vertical"
+          upper_left: ["auto:Nr.", "auto:Nummerierung"]
+          num_examples: 3
+          fields:
+            - alias_field_name: "CN-Code"
+              code_field_name: "cn_code"
+              type: "cn_code_m"
+              primary_key: True
+            - alias_field_name: ["Produktionsstandort / Hersteller", "Hersteller"]
+              code_field_name: "operator_or_installation"
+              type: "string_m"
+            - alias_field_name: "Einheit"
+              code_field_name: "net_mass_unit"
+              type: "good_quantity_unit_m"
+            - alias_field_name: "Warenmenge"
+              code_field_name: "net_mass"
+              type: "net_mass_m"
+            - alias_field_name: "Produktionsmethode"
+              code_field_name: "production_method"
+              type: "production_method_m"
+            - alias_field_name: "Veredelung"
+              code_field_name: "inward_processing"
+              type: "boolean_m"
+            - alias_field_name: "Zollverfahren"
+              code_field_name: "requested_procedure"
+              type: "customs_procedure_desc_m"
+            - alias_field_name: "Vorheriges Zollverfahren"
+              code_field_name: "previous_procedure"
+              type: "customs_procedure_desc_o"
+  
+
+version_1_7_2:
+  sheets: {}
+
+version_1_8:
+  sheets: {}
