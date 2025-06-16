@@ -257,6 +257,7 @@ def entry_imported_good(root, idx, imported_good):
         xd_goods_emissions["SequenceNumber"] = str(idx_ + 1)
         
         xd_goods_emissions["ProductionCountry"] = goods_emission["country_of_production"]
+        xd_goods_emissions["ProductionCountry"] = goods_emission["country_of_production"]
 
         operator = goods_emission["operator"]
         installation = goods_emission["installation"]

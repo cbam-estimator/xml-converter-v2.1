@@ -216,6 +216,11 @@ def load_supplier_tool(installation_entry, prepared_data, config):
             emission_factor = cn_code_entry["indirect_emissions"]["emission_factor"]
 
             electricity_consumed = cn_code_entry["indirect_emissions"]["electricity_consumed"]
+            if isinstance(electricity_consumed, str) or isinstance(emission_factor, str):
+                Log.error(
+                    f"[Supplier <yellow>{installation_entry['installation']}</r>] Invalid value for electricity consumed or emission factor for CN-Code '<yellow>{cn_code}</r>' in supplier tool. Electricity consumed: '<yellow>{electricity_consumed}</r>', Emission factor: '<yellow>{emission_factor}</r>'",
+                    title="supplier_tool | invalid value for electricity consumed or emission factor",
+                )
             cn_code_entry["indirect_emissions"]["see"] = emission_factor * electricity_consumed
 
             # correct for the wrong DeterminationType from the Excel - this should be fixed elsewhere!
