@@ -243,17 +243,26 @@ def load_table_to_dict(worksheet, head_column, columns, orientation="vertical"):
                     title="load_table_to_dict | column not found",
                 )
 
+        empty_row_count = 0
+
         for row in worksheet.iter_rows(min_row=head_index_row + 1):
             entry = {}
             for column_name, column_index in column_indices.items():
                 col_index_int = column_index_from_string(column_index) - 1
                 value = row[col_index_int].value
-                if column_name == head_column and value is None:
+                if column_name == head_column and (value is None or str(value).strip() == ""):
                     entry = {}
                     break
                 entry[column_name] = value
+
             if entry:
                 data.append(entry)
+                empty_row_count = 0 
+            else:
+                empty_row_count += 1 
+                if empty_row_count >= 10:
+                    break
+
 
     elif orientation == "horizontal":
         # Adjusted behavior for horizontal tables
