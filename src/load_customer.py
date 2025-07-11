@@ -41,7 +41,7 @@ def load_customer_sheet(input_file, file_layout):
     """
     raw_data_dict = {}
 
-    wb = openpyxl.load_workbook(input_file)
+    wb = openpyxl.load_workbook(input_file, data_only=True)
 
     for sheet in file_layout["sheets"]:
         # iterate through sheets
@@ -320,7 +320,7 @@ def load_version_layouts(version_layout_file):
     layout_dict = None
 
     try:
-        with open(version_layout_file, "r") as f:
+        with open(version_layout_file, "r", encoding="utf-8") as f:
             layout_dict = yaml.load(f, Loader=SafeLoader)
     except FileNotFoundError:
         Log.error("[load_version_layouts] The specified .yml file was not found.")

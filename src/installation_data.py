@@ -20,11 +20,11 @@ from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 from openpyxl.utils import column_index_from_string
 
-from .log import Log
-from .xlsx_access import load_table_to_dict, keyword_index, column_letter_from_string
-from .load_supplier_tool import load_supplier_tool, get_installation_folder_path
-from .helper import clean_supplier_str
-from .shared import shared_data
+from src.log import Log
+from src.xlsx_access import load_table_to_dict, keyword_index, column_letter_from_string
+from src.load_supplier_tool import load_supplier_tool, get_installation_folder_path
+from src.helper import clean_supplier_str
+from src.shared import shared_data
 
 
 def get_installation_data(config, prepared_data, customer_dict):
@@ -306,7 +306,7 @@ def zero_report(installation_entry, prepared_data, config, action, zero_report_w
             additional_info += " ist in folgenden Dateien unter 'Supplementary/Supporting documents' zu finden:"
 
             for doc in supporting_documents_list:
-                additional_info += f"\n - {doc.split('/')[-1]}"
+                additional_info += f"\n - {os.path.basename(doc)}"
 
     else:
         additional_info = custom_additional_information
@@ -472,10 +472,10 @@ def get_supportings_documents_list(installation_entry, prepared_data, config):
         # copy file to temp folder
         temp_folder_path = os.path.join(shared_data["current"]["output_dir"], "temp")
         for index, filepath in enumerate(default_docs):
-            file_name = filepath.split("/")[-1]
-            if not os.path.exists(temp_folder_path):
-                os.makedirs(temp_folder_path)
-            shutil.copy(filepath, os.path.join(temp_folder_path, file_name))
+            file_name = os.path.basename(filepath)
+            dst_path = os.path.join(temp_folder_path, file_name)
+            os.makedirs(os.path.dirname(dst_path), exist_ok=True)
+            shutil.copy(filepath, dst_path)
             # change file path to new filename
             #default_docs[index] = file_name
         # </>
@@ -517,10 +517,10 @@ def get_supportings_documents_list(installation_entry, prepared_data, config):
 
         temp_folder_path = os.path.join(shared_data["current"]["output_dir"], "temp")
         for filepath in supporting_documents:
-            file_name = filepath.split("/")[-1]
-            if not os.path.exists(temp_folder_path):
-                os.makedirs(temp_folder_path)
-            shutil.copy(filepath, os.path.join(temp_folder_path, file_name))
+            file_name = os.path.basename(filepath)
+            dst_path = os.path.join(temp_folder_path, file_name)
+            os.makedirs(os.path.dirname(dst_path), exist_ok=True)
+            shutil.copy(filepath, dst_path)
             # change file path to new filename
             supporting_documents[supporting_documents.index(filepath)] = file_name
 

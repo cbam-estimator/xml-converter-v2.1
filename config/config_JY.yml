@@ -8,21 +8,21 @@ app_info:
 move_customer_file: False
 
 paths:
-  base_input: "/Users/andreaskahabka/home/2 - cbam-estimator/3 - workspaces/report-creation/report-creation-workflow"
-  base_cloud: "/Users/andreaskahabka/Library/CloudStorage/OneDrive-CBAMEstimator/report_creation_workflow"
-  base_gdrive: "/Users/andreaskahabka/Library/CloudStorage/GoogleDrive-googledrive@cbam-estimator.com/Meine Ablage/Kundenberichte"
+  base_input: 'D:\ING_Werkstudent\Data\report-creation'
+  base_cloud: 'D:\ING_Werkstudent\Data\CBAM Estimator'
+  base_gdrive: 'D:\google_drive\.shortcut-targets-by-id\1TSb17mB0cRMIHrMQy6x9k2NUjaU-EyHD\Alle Kunden'
 
 
-input_directory: "{base_input}/1 - input"
-output_directory: "{base_input}/2 - output"
-default_data_file: "{base_input}/3 - resources/default_data.xlsx"
+input_directory: "${base_input}/1 - input"
+output_directory: "${base_input}/2 - output"
+default_data_file: "${base_input}/3 - resources/default_data.xlsx"
 
 
-log_file: "{base_cloud}/Completed Reports/log/report_creation_log.csv"
-customer_reports_overview_filepath: "{base_cloud}/Report Creation - General/Kundenberichte.xlsx"
-finished_reports_file_path: "{base_cloud}/Completed Reports"
+log_file: "${base_cloud}/Berichtserstellung - Completed Reports/log/report_creation_log.csv"
+customer_reports_overview_filepath: "${base_cloud}/Berichtserstellung - Report Creation - General/Kundenberichte.xlsx"
+finished_reports_file_path: "${base_cloud}/Berichtserstellung - Completed Reports"
 
-all_customers_googledrive_filepath: "{base_gdrive}/Alle Kunden"
+all_customers_googledrive_filepath: "${base_gdrive}"
 
 #intern paths
 version_layouts_file: "resources/version_layouts.yml"
@@ -47,9 +47,9 @@ determination_approach:
 
 
 supplier_workflow:
-  supplier_data_dir: "{base_cloud}/supplier_communication/Supplier Data"
-  consultation_overview_file: "{base_cloud}/supplier_communication/consultation_overview_RH_ohne_makros.xlsx"
-  doc_template_file: "{base_input}/3 - resources/supporting_document_templates/cbam_estimator_supporting_doc.pdf"
+  supplier_data_dir: "${base_cloud}/CO2 - Emissionsberechnung - General/supplier_communication/Supplier Data"
+  consultation_overview_file: "${base_cloud}/CO2 - Emissionsberechnung - General/supplier_communication/consultation_overview_RH_ohne_makros.xlsx"
+  doc_template_file: "${base_input}/3 - resources/supporting_document_templates/cbam_estimator_supporting_doc.pdf"
   
   supplier_tool_pattern: "Supplier_*.xlsx"
   doc_signature_name: "Roman Haak"

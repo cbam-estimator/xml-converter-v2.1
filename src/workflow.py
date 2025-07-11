@@ -14,75 +14,98 @@ from .prepare_data import prepare_data
 from .create_xml import create_report
 import pprint  # noqa
 from .shared import shared_data
-from .helper import get_macos_tags
 import openpyxl
 from .helper import exact_search, non_exact_search
 
 pause_between_reports = True
 pause_after_intro = False
 
+def start(config_file="config/config_JY.yml", no_clear=False):
+    print(f"\nChoose a type for the file: ")
+    print("1. ZR_DOCS - Zero report with a default supporting documents")
+    print("2. ZR_NO_DOCS - Zero report without supporting documents")
+    print("3. NO_TAG - Emission report, default value report, Zero report with mixed supporting documents")
 
-def start(config_file="config/config.yml", no_clear=False):
+    while True:
+        user_input = input("Enter your choice (1 / 2 / 3): ").strip()
+        if user_input in ("1", "2", "3"):
+            break
+        print("Invalid input. Please enter 1, 2, or 3.")
+
+    # Step 1: Clear the log display if allowed
     if not no_clear:
         Log.clear()
+    
+    # Step 2: Load configuration
     config = helper.load_config(config_file=config_file)
 
+    # Step 3: Load input files and any indirect representative files
     input_files, indirect_r_files = load_input_files(config)
 
     if indirect_r_files:
         input_files.append(indirect_r_files)
 
+    # Step 4: Initialize default reference data
     Log.procedure("Loading default data ...")
     loader = LoadingIndicator()
     loader.start()  # Start the loading indicator
-
     DefaultData.initialize(config)
-
     loader.stop()
 
     ### indirect representative files
 
     # other files
 
+    # Step 5: Iterate through all input files
     for index, input_data in enumerate(input_files, start=1):
         try:
+            # Reset current shared state for each run
             shared_data["current"] = {}
             shared_data["current"]["config"] = config
 
+            # Ensure input_data is a list (for multi-file processing)
             if type(input_data) is not list:
                 input_data = [input_data]
 
-            input_file_name = input_data[0].split("/")[-1]
+            input_file_name = os.path.basename(input_data[0])
 
+           # Step 6: Pause if needed before processing next file
             if index == 1 and pause_after_intro or index > 1 and pause_between_reports:
                 Log.wait_for_input(f"<b>Press any button to continue with file {index}:</b> [<orange> {input_file_name.replace("=", " · ")}</orange> ]</b>")
 
+            # Clear screen again if required
             if not no_clear:
                 Log.clear()
 
+            # Step 7: Print status of files being processed
             input_dir = config["input_directory"]
             procedure_str = f"<b>Found {len(input_files)} input file{'s' if len(input_files) > 1 else ''}</b> in <gray>{input_dir}</b>\n\n"
 
             for index_, f in enumerate(input_files, start=1):
                 f = f[0]
+                filename = os.path.basename(f)
+                
                 if index_ < index:
-                    procedure_str += f" ✓ {f.split('/')[-1]}\n"
+                    procedure_str += f" ✓ {filename}\n"
                 elif index_ == index:
-                    procedure_str += f" ➜ <b>{f.split('/')[-1]}</b> <green>[in process]</green>\n"
+                    procedure_str += f" ➜ <b>{filename}</b> <green>[in process]</green>\n"
                 else:
-                    procedure_str += f" - {f.split('/')[-1]}\n"
+                    procedure_str += f" - {filename}\n"
 
             Log.procedure(procedure_str)
             Log.divider()
 
+             # Step 8: Report type tagging if multiple input files
             if len(input_data) > 1:
                 shared_data["current"]["report_type"] = "indirect_representative"
 
+            # Step 9: Parse and collect data from all input files
             customer_data = []
             for input_file in input_data:
                 config["input_file"] = input_file
                 customer_data.append(process_input_file(input_file, config["version_layouts_file"]))
 
+            # Step 10: Extract general customer info
             # Add the output dir to shared data, to access it for pdf creation # todo: move that to load customer
             # that is really ugly and should be changed
             shared_general_info = shared_data.setdefault("general_info", {})
@@ -93,6 +116,7 @@ def start(config_file="config/config.yml", no_clear=False):
             year = shared_general_info["year"] = customer_quarter_table["year"]
             quarter = shared_general_info["quarter"] = customer_quarter_table["quarter"]
 
+            # Step 11: Create output directory
             output_dir = output_path(config, importer_name, year, quarter)
 
             # creating the dir
@@ -105,19 +129,18 @@ def start(config_file="config/config.yml", no_clear=False):
 
             # tag intepretation
 
+            # Step 12: Handle macOS tags (if applicable)
             if len(input_data) == 1:
                 input_file = input_data[0]
+                file_name = os.path.basename(input_file)
 
-                tags = get_macos_tags(input_file)
-
-                if tags is None or len(tags) == 0:
+                if user_input == "3":
                     pass
-                elif len(tags) > 1:
-                    Log.warning(f"Multiple tags found for file {input_file.split('/')[-1]}: {tags}\n Ignoring all tags.")
-                elif tags[0].startswith("ZR_DOCS"):
-                    Log.info(f"tag <yellow>ZR_DOCS</r> found for file {input_file.split('/')[-1]}")
+                elif user_input == "1":
+                    Log.info(f"Type <yellow>ZR_DOCS</r> for file {input_file.split('/')[-1]}")
                     config["tagset_determination_approach"] = "zero_report_with_default_docs"
 
+                    # Collect supporting documents from input folder
                     supporting_docs = [f for f in os.listdir(input_dir) if f.startswith("supporting_document_")]
 
                     if len(supporting_docs) == 0:
@@ -125,23 +148,29 @@ def start(config_file="config/config.yml", no_clear=False):
                         return
 
                     config["default_supporting_documents"] = [os.path.join(input_dir, supporting_doc) for supporting_doc in supporting_docs]
-                elif tags[0].startswith("ZR_NO_DOCS"):
-                    Log.info(f"tag <yellow>ZR_NO_DOCS</r> found for file {input_file.split('/')[-1]}")
+                elif user_input == "2":
+                    Log.info(f"Type <yellow>ZR_NO_DOCS</r> for file {input_file.split('/')[-1]}")
                     config["tagset_determination_approach"] = "zero_report_without_docs"
 
 
+            # Step 13: Load extra customer documents (skip for known quarters)
             if f"Q{quarter}-{year}" not in ["Q4-2023", "Q1-2024", "Q2-2024"]:
                 load_customer_supporting_documents(importer_name, config)
 
+            # Step 14: Prepare report data
             prepared_data = prepare_data(customer_data, config)
 
+            # Step 15: Generate XML reports (real and test versions)
             xml_tree = create_report(prepared_data)
             xml_tree_test = create_report(prepared_data, test_report=True)
 
+            # Step 16: Save XML and related output
             save_files(xml_tree, xml_tree_test, config, prepared_data)
 
+            # Step 17: Summary of report
             Log.summary(config)
 
+            # Step 18: User confirmation to finalize report
             user_choice = Log.dialog("Do you want to mark the report as correct and finished?", title="Report Confirmation", options=["yes", "no"])
             if user_choice.lower() == "yes":
                 save_completed_report(config)
@@ -150,6 +179,7 @@ def start(config_file="config/config.yml", no_clear=False):
 
             Log.info(f"Finished processing file {index} ({input_data[0].split('/')[-1]})")
 
+        # Step 19: Error handling
         except Exception as e:
             if isinstance(e, MarkerException):
                 print("marker_exception")
@@ -244,7 +274,9 @@ def save_files(xml_tree, xml_tree_test, config, prepared_data):
             basename = os.path.basename(sup_doc_file_name)
             suffix = basename.split(".")[-1]
             basename = basename[: -len(suffix) - 1]
-            shutil.copy(os.path.join(output_dir, "temp", sup_doc_file_name), os.path.join(output_dir, supporting_docs_folder_name, basename + f"_{i}" + "." + suffix))
+            target_path = os.path.join(output_dir, supporting_docs_folder_name, basename + f"_{i}." + suffix)
+            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+            shutil.copy(os.path.join(output_dir, "temp", sup_doc_file_name), target_path)
             print(f"Copied {os.path.join(output_dir, 'temp', sup_doc_file_name)} to {os.path.join(output_dir, supporting_docs_folder_name, basename + f'_{i}' + '.' + suffix)}")
 
     # rename supporting document folder such that the number len(shared_data_docs) is in brackets at the end
@@ -252,14 +284,14 @@ def save_files(xml_tree, xml_tree_test, config, prepared_data):
     new_name = os.path.join(output_dir, f"{supporting_docs_folder_name} ({num_supporting_docs})")
     os.rename(old_name, new_name)
 
-    shutil.copy(
-        config["input_file"],
-        os.path.join(output_dir, os.path.basename(config["input_file"])),
-    )
+    input_target = os.path.join(output_dir, os.path.basename(config["input_file"]))
+    os.makedirs(os.path.dirname(input_target), exist_ok=True)
+    shutil.copy(config["input_file"], input_target)
 
     # rename the input file
     old_name = os.path.join(output_dir, os.path.basename(config["input_file"]))
     new_name = os.path.join(output_dir, input_customer_name)
+    os.makedirs(os.path.dirname(new_name), exist_ok=True)
     os.rename(old_name, new_name)
 
     if config["move_customer_file"]:
@@ -334,17 +366,24 @@ def load_files(config: dict):
             new_name = os.path.join(input_dir, file_name[2:])
             os.rename(old_name, new_name)
 
-    # Neue Patterns definieren
-    pattern1 = "customer*.xlsx"  # Dateien, die mit 'customer_' beginnen
-    pattern2 = "Customer*.xlsx"  # Dateien, die mit 'Customer' beginnen
+    patterns = ["customer*.xlsx", "Customer*.xlsx"]
+    excel_files_raw = []
+    for pattern in patterns:
+        excel_files_raw.extend(glob.glob(os.path.join(input_dir, pattern)))
 
-    # Dateien sammeln, die zu den Patterns passen
-    excel_files = glob.glob(os.path.join(input_dir, pattern1))
-    excel_files.extend(glob.glob(os.path.join(input_dir, pattern2)))
+    seen = set()
+    excel_files = []
+
+    for path in excel_files_raw:
+        norm_path = os.path.normcase(os.path.normpath(path)) 
+        if norm_path not in seen:
+            seen.add(norm_path)
+            excel_files.append(os.path.normpath(path))
 
     ind_rep_files = []
 
     ind_rep_folder_name = "2 - indirect_representative"
+
 
     if os.path.exists(os.path.join(config["input_directory"], ind_rep_folder_name)):
         ir_pattern1 = "master*.xlsx"
@@ -365,11 +404,11 @@ def load_files(config: dict):
 
     if not excel_files and not ind_rep_files:
         Log.error(
-            f"Error: No .xlsx files found in input folder for (pattern: '<yellow>{pattern1}</r>')\n\nUsing path: <yellow>{input_dir}</r>",
-            title=f"'{pattern1}' file not found !",
+            f"Error: No .xlsx files found in input folder for (pattern: '<yellow>{pattern}</r>')\n\nUsing path: <yellow>{input_dir}</r>",
+            title=f"'{pattern}' file not found !",
         )
     else:
-        file_names = "\n".join([file.split("/")[-1] for file in excel_files])
+        file_names = "\n".join([os.path.basename(file) for file in excel_files])
         Log.info(f"Found {len(excel_files)} .xlsx file{'s' if len(excel_files) > 1 else ''}:\n{file_names}")
 
         files = []
@@ -383,6 +422,7 @@ def load_files(config: dict):
                     f"Renamed\n  {file_path.split('/')[-1]} \n→ {new_name.split('/')[-1]}",
                     "workflow",
                 )
+                
             files.append(new_name)
 
         return files, ind_rep_files
@@ -525,6 +565,13 @@ def load_customer_supporting_documents(customer_name, config):
 
     # * find the importer folder within the supplier data
 
+    Log.debug(
+        f"[Importer Search] Searching for folder matching importer '<yellow>{importer}</r>' "
+        f"in path: <yellow>{supplier_data_dir}</r>\n"
+        f"Available folders:\n - " + "\n - ".join(os.listdir(supplier_data_dir))
+    )
+
+    
     importer_folder = exact_search(importer, os.listdir(supplier_data_dir))
     if importer_folder is None:
         importer_folder = non_exact_search(

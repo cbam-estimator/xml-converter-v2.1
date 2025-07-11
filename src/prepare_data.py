@@ -10,6 +10,12 @@ from .supplier_data import get_supplier_data
 from .installation_data import get_installation_data
 from .shared import shared_data
 
+import io
+from pdfrw import PdfReader, PdfWriter, PdfDict, PageMerge
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
+import textwrap
+
 
 def prepare_data(customer_dict_ls, config):
     """
@@ -68,6 +74,7 @@ def create_goods_emissions(customer_dict, prepared_data_dict, installation_data,
     report_year = prepared_data_dict["general_info"]["year"]
     report_quarter = prepared_data_dict["general_info"]["quarter"]
 
+    # iterate over goods
     for ig_key, imported_good in imported_goods.items():
         cn_code = ig_key.split(";")[0]
         country = ig_key.split(";")[1]
@@ -76,6 +83,7 @@ def create_goods_emissions(customer_dict, prepared_data_dict, installation_data,
 
         goods_emission = {}
 
+        # iterate over all entries
         for entry in raw_entries:
             installation = entry["det_installation"]
             operator = entry["det_operator"]
@@ -91,6 +99,7 @@ def create_goods_emissions(customer_dict, prepared_data_dict, installation_data,
             else:
                 production_method, production_method_name = entry["production_method"].split(" - ")
 
+            # check if the entry is already in goods_emission
             if io_key not in goods_emission:
                 # iterates over all installations/ operator entries
 
@@ -100,6 +109,7 @@ def create_goods_emissions(customer_dict, prepared_data_dict, installation_data,
 
                 cn_code_emission_data = None
 
+                # General determination: fix_type_of_determination
                 if fix_determination_type == "02":  # default value report
                     inst_determination_type = "02"
 
@@ -112,6 +122,7 @@ def create_goods_emissions(customer_dict, prepared_data_dict, installation_data,
                     if "default_supporting_documents" in installation_data:
                         installation_data_entry["supporting_documents"] = installation_data["default_supporting_documents"]
 
+                # Detail determination: per installation
                 else:
                     # find the supplier/ default data set for the given installation
                     ## todo: this must support non exact matches as well
@@ -226,7 +237,7 @@ def create_supporting_documents(installation_data_entry, cn_code, installation, 
     "Must return a dict for supporting documents, structured like the report xml"
 
     def create_attachment(doc):
-        basename = doc.split("/")[-1]
+        basename = os.path.basename(doc)
 
         shared_sup_docs = shared_data["current"].setdefault("supporting_documents", {})
         document_index = shared_sup_docs.setdefault(basename, 0)
@@ -374,11 +385,6 @@ def create_doc_pdf(installation_data_entry, cn_code, installation, operator, gen
 
     # Function to fill the PDF form
     def fill_pdf(input_pdf_path, output_pdf_path, data_dict):
-        import io
-        from pdfrw import PdfReader, PdfWriter, PdfDict, PageMerge
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.units import mm
-        import textwrap
 
         # === Text Properties (Adjust as Needed) ===
         text_alignment = "top-left"  # Alignment: 'top-left' (currently only this option)

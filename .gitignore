@@ -26,3 +26,5 @@ src/__pycache__/helper.cpython-312.pyc
 *graveyard*
 
 src/__pycache__/helper.cpython-312.pyc
+
+# pytest -s tests/test_workflow.py

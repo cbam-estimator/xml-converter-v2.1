@@ -3,25 +3,47 @@ from yaml.loader import SafeLoader
 from rich.text import Text
 from .log import Log
 import unicodedata
-import xattr
+# import xattr
 import plistlib
+from string import Template
+from pathlib import Path
+import difflib
+from pathlib import Path
 
 
-def get_macos_tags(file_path):
-    try:
-        # Versuchen, das erweiterte Attribut für Finder-Tags zu lesen
-        tags = xattr.getxattr(file_path, "com.apple.metadata:_kMDItemUserTags")
-        # Umwandeln der Binärdaten im plist-Format in eine Python-Struktur
-        tags = plistlib.loads(tags)
-        return tags
-    except (KeyError, OSError, plistlib.InvalidFileException) as e:
-        # Wenn keine Tags vorhanden sind oder ein Fehler auftritt, wird eine Nachricht zurückgegeben
-        return None
+# def get_macos_tags(file_path):
+#     try:
+#         # Versuchen, das erweiterte Attribut für Finder-Tags zu lesen
+#         tags = xattr.getxattr(file_path, "com.apple.metadata:_kMDItemUserTags")
+#         # Umwandeln der Binärdaten im plist-Format in eine Python-Struktur
+#         tags = plistlib.loads(tags)
+#         return tags
+#     except (KeyError, OSError, plistlib.InvalidFileException) as e:
+#         # Wenn keine Tags vorhanden sind oder ein Fehler auftritt, wird eine Nachricht zurückgegeben
+#         return None
 
 
 def load_config(config_file):
     with open(config_file, "r") as f:
-        config = yaml.load(f, Loader=SafeLoader)
+        raw_config = yaml.safe_load(f)
+
+    paths = raw_config.get("paths", {})
+
+    def resolve_path(path_str):
+        resolved = Template(path_str).safe_substitute(paths)
+        return str(Path(resolved))
+
+    def resolve_all_paths(obj):
+        if isinstance(obj, dict):
+            return {k: resolve_all_paths(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [resolve_all_paths(i) for i in obj]
+        elif isinstance(obj, str):
+            return resolve_path(obj)
+        return obj
+
+    config = resolve_all_paths(raw_config)
+
     return config
 
 
