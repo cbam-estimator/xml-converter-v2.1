@@ -351,7 +351,7 @@ def entry_imported_good(root, idx, imported_good):
         see_direct = r_float(direct_emissions["SpecificEmbeddedEmissions"])
 
         emission_factor = r_float(indirect_emissions["EmissionFactor"], round_to=5)
-        electricity_consumed = r_float(indirect_emissions["ElectricityConsumed"], round_to=2)
+        electricity_consumed = r_float(indirect_emissions["ElectricityConsumed"], round_to=5)
 
         if emission_factor is not None:  # not with default values
             see_indirect = r_float(emission_factor * electricity_consumed)
@@ -365,7 +365,7 @@ def entry_imported_good(root, idx, imported_good):
             Log.error(f"[entry_imported_good] see_direct > 35: {see_direct}")
 
         if see_indirect > 35.0:
-            Log.error(f"[entry_imported_good] see_direct > 35: {see_indirect}")
+            Log.error(f"[entry_imported_good] see_indirect > 35: {see_indirect}")
 
         ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## 
 
@@ -406,7 +406,7 @@ def entry_imported_good(root, idx, imported_good):
             "ElectricitySource": indirect_emissions["ElectricitySource"],
             "OtherSourceIndication": indirect_emissions["OtherSourceIndication"],
             "EmissionFactorSource": indirect_emissions["EmissionFactorSource"],
-            "ElectricityConsumed": r_float(electricity_consumed, round_to=2, return_string=True),
+            "ElectricityConsumed": r_float(electricity_consumed, round_to=5, return_string=True),
             "EmissionFactor": r_float(emission_factor, round_to=5, return_string=True),
             "EmissionFactorSourceValue": indirect_emissions["EmissionFactorSourceValue"],
         }
