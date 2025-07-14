@@ -593,15 +593,19 @@ def load_customer_supporting_documents(customer_name, config):
 
     # if the importer folder contains "customer_supporting_documents" folder and if there is a file in it, get the file path
     if not "default_supporting_documents" in config:
-        supporting_docs_folder = os.path.join(importer_folder_path, "customer_supporting_documents")
-        if os.path.exists(supporting_docs_folder) and os.path.isdir(supporting_docs_folder):
+        matching_folders = [
+            f for f in os.listdir(importer_folder_path)
+            if "supporting_document" in f.lower() and os.path.isdir(os.path.join(importer_folder_path, f))
+        ]
+
+        if matching_folders:
+            supporting_docs_folder = os.path.join(importer_folder_path, matching_folders[0])
             files = [f for f in os.listdir(supporting_docs_folder) if not f.startswith('.')]
             if len(files) > 0:
-                # get the first file in the folder
                 supporting_docs_file = os.path.join(supporting_docs_folder, files[0])
                 config["default_supporting_documents"] = [supporting_docs_file]
                 Log.info(
-                    f"Found default supporting document on customer level in supplier data: '<yellow>{supporting_docs_file}</r>'",
+                    f"Found default supporting document in folder '<yellow>{supporting_docs_folder}</r>': '<yellow>{supporting_docs_file}</r>'",
                 )
 
     # ↑ < supporting_docs_adjustment 17/04 >
