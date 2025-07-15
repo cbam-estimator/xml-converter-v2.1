@@ -9,7 +9,7 @@ move_customer_file: False
 
 paths:
   base_input: 'D:\ING_Werkstudent\Data\report-creation'
-  base_cloud: 'D:\ING_Werkstudent\Data\CBAM Estimator'
+  base_cloud: 'D:\CBAM Estimator'
   base_gdrive: 'D:\google_drive\.shortcut-targets-by-id\1TSb17mB0cRMIHrMQy6x9k2NUjaU-EyHD\Alle Kunden'
 
 
@@ -47,8 +47,8 @@ determination_approach:
 
 
 supplier_workflow:
-  supplier_data_dir: "${base_cloud}/CO2 - Emissionsberechnung - General/supplier_communication/Supplier Data"
-  consultation_overview_file: "${base_cloud}/CO2 - Emissionsberechnung - General/supplier_communication/consultation_overview_RH_ohne_makros.xlsx"
+  supplier_data_dir: "${base_cloud}/CO2 - Emissionsberechnung - supplier_communication/Supplier Data"
+  consultation_overview_file: "${base_cloud}/CO2 - Emissionsberechnung - supplier_communication/consultation_overview_RH_ohne_makros.xlsx"
   doc_template_file: "${base_input}/3 - resources/supporting_document_templates/cbam_estimator_supporting_doc.pdf"
   
   supplier_tool_pattern: "Supplier_*.xlsx"

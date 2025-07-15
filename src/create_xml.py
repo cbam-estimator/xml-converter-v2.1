@@ -354,7 +354,7 @@ def entry_imported_good(root, idx, imported_good):
         electricity_consumed = r_float(indirect_emissions["ElectricityConsumed"], round_to=5)
 
         if emission_factor is not None:  # not with default values
-            see_indirect = r_float(emission_factor * electricity_consumed)
+            see_indirect = r_float(emission_factor * electricity_consumed, round_to=7)
         else:
             see_indirect = r_float(indirect_emissions["SpecificEmbeddedEmissions"])
 

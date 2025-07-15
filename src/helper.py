@@ -121,6 +121,7 @@ def clean_supplier_str(supplier_str):
         "-",
         "_",
         "(",
+        "|",
         ")",
         ".",
         ",",

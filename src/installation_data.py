@@ -491,11 +491,10 @@ def get_supportings_documents_list(installation_entry, prepared_data, config):
         if "supporting_document" in f.lower() and os.path.isdir(os.path.join(installation_folder_path, f))
     ]
 
+    sup_doc_path = None
     if possible_folders:
         sup_doc_folder_name = possible_folders[0]
         sup_doc_path = os.path.join(installation_folder_path, sup_doc_folder_name)
-    else:
-        sup_doc_path = None
 
     custom_additional_information_path = os.path.join(installation_folder_path, "custom_additional_information.txt")
 
@@ -514,13 +513,7 @@ def get_supportings_documents_list(installation_entry, prepared_data, config):
         else:
             custom_additional_information = None
 
-    if sup_doc_path is None:
-        Log.error(
-            f"No supporting documents found in folder containing 'supporting_document' under '<yellow>{installation_folder_path}</r>'",
-            title="Supporting Documents Missing"
-        )
-
-    if os.path.exists(sup_doc_path):
+    if sup_doc_path and os.path.exists(sup_doc_path):
         # Liste der Dateien filtern, um versteckte Dateien auszuschließen und vollständige Pfade zu erhalten
         supporting_documents = [
             os.path.join(sup_doc_path, f)  # Vollständiger Pfad
