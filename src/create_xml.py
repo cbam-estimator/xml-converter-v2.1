@@ -348,7 +348,7 @@ def entry_imported_good(root, idx, imported_good):
 
         inst_netmass = r_float(goods_emission["net_mass"])
 
-        see_direct = r_float(direct_emissions["SpecificEmbeddedEmissions"])
+        see_direct = r_float(direct_emissions["SpecificEmbeddedEmissions"], round_to=7)
 
         emission_factor = r_float(indirect_emissions["EmissionFactor"], round_to=5)
         electricity_consumed = r_float(indirect_emissions["ElectricityConsumed"], round_to=5)
@@ -356,7 +356,7 @@ def entry_imported_good(root, idx, imported_good):
         if emission_factor is not None:  # not with default values
             see_indirect = r_float(emission_factor * electricity_consumed, round_to=7)
         else:
-            see_indirect = r_float(indirect_emissions["SpecificEmbeddedEmissions"])
+            see_indirect = r_float(indirect_emissions["SpecificEmbeddedEmissions"], round_to=7)
 
 
         ## PLAUSUILITY CHECK -> Move to somewhere else!

@@ -246,7 +246,7 @@ def save_files(xml_tree, xml_tree_test, config, prepared_data):
 
     shared_data_docs = shared_data["current"].setdefault("supporting_documents", {})
 
-    with zipfile.ZipFile(os.path.join(output_dir, report_folder_name, zip_file), "w") as zipf:
+    with zipfile.ZipFile(os.path.join(output_dir, report_folder_name, zip_file), "w", compresslevel=9) as zipf:
         zipf.write(xml_path, xml_file)
         for sup_doc_file_name, amount in shared_data_docs.items():
             for i in range(amount):
@@ -256,7 +256,7 @@ def save_files(xml_tree, xml_tree_test, config, prepared_data):
                 basename = basename[: -len(suffix) - 1]
                 zipf.write(os.path.join(output_dir, "temp", sup_doc_file_name), basename + f"_{i}" + "." + suffix)
 
-    with zipfile.ZipFile(os.path.join(output_dir, test_folder_name, zip_test_file), "w") as zipf:
+    with zipfile.ZipFile(os.path.join(output_dir, test_folder_name, zip_test_file), "w", compresslevel=9) as zipf:
         zipf.write(xml_test_path, xml_test_file)
         for sup_doc_file_name, amount in shared_data_docs.items():
             for i in range(amount):
