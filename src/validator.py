@@ -26,7 +26,7 @@ v.schema = {
     "cn_code": {"type": "string", "regex": r"^[0-9]{8}$"},
     "cell_index": {"type": "string", "regex": r"^[A-Z]+[0-9]+$"},
     "version": {"type": "string", "regex": r"^[0-9]+(\.[0-9]+)*$"},
-    "eori": {"type": "string", "regex": r"^(DE[0-9]{7}|DE[0-9]{15}|ATEOS[0-9]{8,12}|PL[0-9]{14}Z?|RO[A-Z0-9]{2,15}|FR[0-9]{14})$"}, # "eori": {"type": "string", "regex": r"^(DE[0-9]{7}|DE[0-9]{15}|ATEOS[0-9]{8,12}|PL[0-9]{14}Z?|RO[A-Z0-9]{2,15})$"},
+    "eori": {"type": "string", "regex": r"^(DE[0-9]{7}|DE[0-9]{15}|ATEOS[0-9]{8,12}|PL[0-9]{14}Z?|RO[A-Z0-9]{2,15}|FR[0-9]{14}|IT[0-9]{11})$"}, # "eori": {"type": "string", "regex": r"^(DE[0-9]{7}|DE[0-9]{15}|ATEOS[0-9]{8,12}|PL[0-9]{14}Z?|RO[A-Z0-9]{2,15})$"},
     "string": {"type": "string"},
     "mail_adress": {
         "type": "string",
