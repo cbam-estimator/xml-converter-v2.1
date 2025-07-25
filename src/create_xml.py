@@ -547,11 +547,11 @@ def report_intro(root, prepared_data, test_report):
         elif general_info["importer_country"] == "DE":
             root["ReferenceNumber"] = "DE000004"
         elif general_info["importer_country"] == "AT":
-            root["ReferenceNumber"] = "DE000004"
+            root["ReferenceNumber"] = "AT000038"
         elif general_info["importer_country"] == "FR":
             root["ReferenceNumber"] = "FR000001"
         elif general_info["importer_country"] == "IT":
-            root["ReferenceNumber"] = "IT000001"
+            root["ReferenceNumber"] = "IT000005"
         else:
             Log.error(f"[national_competent_auth] NathCompAuths other then FR, DE and AT not supporter yet. Customer country: '{general_info['importer_country']}")
         return root
