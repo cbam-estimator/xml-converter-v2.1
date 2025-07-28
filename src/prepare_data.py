@@ -603,7 +603,11 @@ def create_imported_goods(customer_dict_ls, prepared_data_dict):
                     )
 
             if "country_of_origin" not in entry or entry["country_of_origin"] is None or entry["country_of_origin"] == "":
-                entry["country_of_origin"] = operator["operator_country"]
+                # installation is prefered as source for country of origin
+                if installation is not None:
+                    entry["country_of_origin"] = installation["installation_country"]
+                elif operator is not None:
+                    entry["country_of_origin"] = operator["operator_country"]
             print(f"country_of_origin: {entry['country_of_origin']}")
 
             country_code = entry["country_of_origin"] # country code?
