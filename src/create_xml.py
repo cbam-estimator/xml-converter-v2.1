@@ -297,7 +297,7 @@ def entry_imported_good(root, idx, imported_good):
             Log.warning(f"[entry_imported_good] Operator name starts with 'dummy' → Not setting operator data")
         else:
             xd_goods_emissions["InstallationOperator"] = {
-                "OperatorId": operator["operator_id"],
+                "OperatorId": operator.get("operator_id", "-"),
                 "OperatorName": operator["operator_name"],
                 "OperatorAddress": {
                     "Country": operator["operator_country"],
@@ -325,7 +325,7 @@ def entry_imported_good(root, idx, imported_good):
                     installation[insta_key] = operator[key]
 
             xd_goods_emissions["Installation"] = {
-                "InstallationId": installation["installation_id"],
+                "InstallationId": installation.get("installation_id", "-"),
                 "InstallationName": installation["installation_name"],
                 "Address": {
                     "EstablishmentCountry": installation["installation_country"],

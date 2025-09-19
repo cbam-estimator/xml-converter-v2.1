@@ -75,7 +75,11 @@ def process_and_validate(val_type: str, input, entry_data=None, condition=None, 
     validate = v.validate({val_type: input})
 
     if not validate:
-        Log.warning(f"[validate] Invalid value '{input}' for type '{val_type}'")
+        schema_rule = v.schema.get(val_type, {})
+        Log.warning(
+            f"[validate] Invalid value '{input}' for type '{val_type}'.\n"
+            f"  ↳ Expected rule: {schema_rule}"
+        )
 
     return input, validate
 
