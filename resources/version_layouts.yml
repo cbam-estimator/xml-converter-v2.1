@@ -109,6 +109,9 @@ base:
               required: False
               code_field_name: "operator_remarks"
               type: "string_o"
+            - alias_field_name: "Operator ID"
+              code_field_name: "operator_id"
+              type: "id_m"
     - code_sheet_name: "Produktions_Standorte_Liste"
       alias_sheet_name: ["Produktions_Standorte_Liste", "Produktionsstandorte"]
       tables:
@@ -147,6 +150,9 @@ base:
               required: False
               code_field_name: "installation_remarks"
               type: "string_o"
+            - alias_field_name: "Installation ID"
+              code_field_name: "installation_id"
+              type: "id_m"
     - code_sheet_name: "Angaben_zu_Warenmengen"
       alias_sheet_name: ["Angaben_zu_Warenmengen", "Warenimporte"]
       tables:

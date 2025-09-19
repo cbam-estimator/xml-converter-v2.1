@@ -32,6 +32,7 @@ v.schema = {
         "type": "string",
         "regex": r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$",
     },
+    "id": {"type": "string", "regex": r"^.{1,20}$"},
     "country": {"type": "string"},
     "country_code": {"type": "string", "regex": r"^[A-Z]{2}$"},
     "year": {"type": "string", "regex": r"^[0-9]{4}$"},
