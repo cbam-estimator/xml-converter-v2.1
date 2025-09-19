@@ -249,14 +249,20 @@ def load_supplier_tool(installation_entry, prepared_data, config):
                 cn_code_entry["indirect_emissions"]["type_of_determination"] = "01"
                 Log.warning(
                     f"Read Determation Type 02 (=default value) from supplier tool for indirect:type_of_det.('<yellow>{cn_code}</r>')\n→ Overwrite",
-                    title="supplier_tool | type of determination 02",
+                    title="supplier_tool | type of determination 02"
                 )
+
+
 
             # set default value for source of emission factor if not given
 
             source_of_ef = cn_code_entry["indirect_emissions"]["source_of_emission_factor"]
 
-            if source_of_ef == "01":
+            if indir_tod == "03":
+                cn_code_entry["indirect_emissions"]["source_of_electricity"] = ""
+                cn_code_entry["indirect_emissions"]["source_of_emission_factor_value"] = "-"
+
+            if indir_tod != "03" and source_of_ef == "01":
                 source_of_efv = cn_code_entry["indirect_emissions"]["source_of_emission_factor_value"]
                 default_val = "Der Wert wurde anhand der Herstellerangaben berechnet."
 
@@ -267,7 +273,6 @@ def load_supplier_tool(installation_entry, prepared_data, config):
                         title="supplier_tool | source of emission factor",
                     )
 
-            
 
             if dir_tod == "03" and (cn_code_entry["direct_emissions"]["additional_info"] == "" or cn_code_entry["direct_emissions"]["additional_info"] is None):
                 Log.warning(
