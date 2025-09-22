@@ -153,7 +153,7 @@ base:
               type: "string_o"
             - alias_field_name: "Installation ID"
               code_field_name: "installation_id"
-              type: "id_m"
+              type: "id_o"
               required: False
     - code_sheet_name: "Angaben_zu_Warenmengen"
       alias_sheet_name: ["Angaben_zu_Warenmengen", "Warenimporte"]
