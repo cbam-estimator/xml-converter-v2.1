@@ -21,7 +21,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, 
 from openpyxl.utils import column_index_from_string
 
 from src.log import Log
-from src.xlsx_access import load_table_to_dict, keyword_index, column_letter_from_string
+from src.xlsx_access import load_table_to_dict, keyword_index, column_letter_from_string, row_index_from_string
 from src.load_supplier_tool import load_supplier_tool, get_installation_folder_path
 from src.helper import clean_supplier_str
 from src.shared import shared_data
@@ -597,8 +597,6 @@ def get_overview_data(config, prepared_data):
         )
         return
 
-    alias_dict = {}
-
     alias_col = column_index_from_string(column_letter_from_string(alias_head_field))
     real_name_col = column_index_from_string(column_letter_from_string(real_name_field))
 
@@ -646,32 +644,65 @@ def get_overview_data(config, prepared_data):
     # * load table
 
     # * determine column indices
+    head_index = keyword_index(importer_sheet, "installation")
+    if head_index is None:
+        Log.error(f"Could not find 'installation' column in {importer_sheet.title}",
+                  title="supplier_workflow | installation column not found")
+        return None
 
+    head_index_row = row_index_from_string(head_index)
+
+    # * build column list
     columns = [
         "installation",
-        "communication status",
         "date of last update",
         "operator",
         "date of attempt $x",
         "remarks dropdown $x",
         "remarks $x",
     ]
-
     number_of_comm_attempts = 8
-
-    for col in columns[:]:  # iterate over copy of list
+    for col in columns[:]:
         if col.endswith("$x"):
             base = col[:-2]
             for idx_ in range(1, number_of_comm_attempts + 1):
-                new_col = f"{base}{idx_}"
-                columns.append(new_col)
+                columns.append(f"{base}{idx_}")
             columns.remove(col)
 
-    head_index_keyword = "installation"
+    year = str(general_info.get("year"))
+    quarter = str(general_info.get("quarter"))
+    quarter_tag = f"Q{quarter} - {year}"
+    comm_status_quarter_col = f"communication status - {quarter_tag}".lower()
 
-    # * load the table into a dict
+    sheet_headings = [
+        " ".join(str(cell.value).strip().lower().split())
+        for cell in importer_sheet[head_index_row] if cell.value
+    ]
 
-    return load_table_to_dict(importer_sheet, head_index_keyword, columns)
+    if comm_status_quarter_col in sheet_headings:
+        columns.insert(1, comm_status_quarter_col)
+        comm_status_col_used = comm_status_quarter_col
+    elif "communication status" in sheet_headings:
+        columns.insert(1, "communication status")
+        comm_status_col_used = "communication status"
+    else:
+        Log.warning(
+            f"Neither '{comm_status_quarter_col}' nor 'communication status' found in sheet {importer_sheet.title}",
+            title="supplier_workflow | communication status column not found")
+        comm_status_col_used = None
+
+    data = load_table_to_dict(importer_sheet, "installation", columns)
+
+    if comm_status_col_used and comm_status_col_used != "communication status":
+        for row in data:
+            row["communication status"] = row.pop(comm_status_col_used)
+
+
+    for i, row in enumerate(data[:10], start=1):
+        print(f"Row {i} | installation: {row.get('installation')} | communication status: {row.get('communication status')}")
+
+
+    return data
 
 
 class Supplier_installation:
