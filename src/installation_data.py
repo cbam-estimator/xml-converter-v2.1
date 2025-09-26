@@ -669,26 +669,30 @@ def get_overview_data(config, prepared_data):
                 columns.append(f"{base}{idx_}")
             columns.remove(col)
 
+    def _normalize_header(val: str) -> str:
+        return "".join(str(val).strip().lower().replace("-", "").split())
+
+    normalized_map = {
+        _normalize_header(cell.value): str(cell.value).strip()
+        for cell in importer_sheet[head_index_row] if cell.value
+    }
+
     year = str(general_info.get("year"))
     quarter = str(general_info.get("quarter"))
     quarter_tag = f"Q{quarter} - {year}"
-    comm_status_quarter_col = f"communication status - {quarter_tag}".lower()
+    comm_status_quarter_col = _normalize_header(f"communication status - {quarter_tag}")
 
-    sheet_headings = [
-        " ".join(str(cell.value).strip().lower().split())
-        for cell in importer_sheet[head_index_row] if cell.value
-    ]
-
-    if comm_status_quarter_col in sheet_headings:
-        columns.insert(1, comm_status_quarter_col)
-        comm_status_col_used = comm_status_quarter_col
-    elif "communication status" in sheet_headings:
-        columns.insert(1, "communication status")
-        comm_status_col_used = "communication status"
+    if comm_status_quarter_col in normalized_map:
+        comm_status_col_used = normalized_map[comm_status_quarter_col]
+        columns.insert(1, comm_status_col_used)
+    elif _normalize_header("communication status") in normalized_map:
+        comm_status_col_used = normalized_map[_normalize_header("communication status")]
+        columns.insert(1, comm_status_col_used)
     else:
         Log.warning(
             f"Neither '{comm_status_quarter_col}' nor 'communication status' found in sheet {importer_sheet.title}",
-            title="supplier_workflow | communication status column not found")
+            title="supplier_workflow | communication status column not found"
+        )
         comm_status_col_used = None
 
     data = load_table_to_dict(importer_sheet, "installation", columns)
